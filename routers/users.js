@@ -1,20 +1,20 @@
-const router = require("express").Router();
-const path = require("path");
-const pathUsers = path.join(__dirname, "..", "data", "users.json");
+const router = require('express').Router();
+const path = require('path');
 
-const readFile = require("../utils/read-file.js");
+const pathUsers = path.join(__dirname, '..', 'data', 'users.json');
+const readFile = require('../utils/read-file.js');
 
-//Маршрут для списка пользователей
-router.get("/users", (req, res) => {
+// Маршрут для списка пользователей
+router.get('/users', (req, res) => {
   readFile(pathUsers)
     .then(data => res.send(data))
-    .catch(err => {
-      res.status(404).send({ message: "Нет такого файла" });
+    .catch(() => {
+      res.status(500).send({ message: 'Нет такого файла' });
     });
 });
 
-//Маршрут для пользователя по ID
-router.get("/users/:id", (req, res) => {
+// Маршрут для пользователя по ID
+router.get('/users/:id', (req, res) => {
   const { id } = req.params;
 
   readFile(pathUsers)
