@@ -1,3 +1,4 @@
+// Спасибо за труд! Чая, кофе и печенек!
 const express = require('express');
 
 const app = express();
@@ -13,4 +14,4 @@ app.use('/', usersCards);
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
-app.listen(PORT, () => console.log(`Слушаем порт ${PORT}`));
+app.listen(PORT);
