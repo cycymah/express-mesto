@@ -1,0 +1,12 @@
+const router = require("express").Router();
+
+const readFile = require("../utils/read-file");
+const path = require("path");
+const pathCards = path.join(__dirname, "../data/cards.json");
+
+//Маршрут для карточек
+router.get("/cards", (req, res) => {
+  readFile(pathCards).then(data => res.send(data));
+});
+
+module.exports = router;
