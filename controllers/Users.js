@@ -2,25 +2,40 @@ const Users = require('../models/users');
 
 module.exports.getUsers = (req, res) => {
   Users.find()
-    .then((data) => res.send(data))
-    .catch(() => {
-      res.status(500).send({ message: 'Нет такого файла' });
+    .orFail(new Error('getError'))
+    .then((data) => res.status(200).send(data))
+    .catch((err) => {
+      if (err.message === 'getError') {
+        res.status(404).send({ message: 'Ошибка доступа' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
     });
 };
 
 module.exports.getUserById = (req, res) => {
   const { id } = req.params;
-  Users.findOne({ _id: id }).then((user) => {
-    if (!user) {
-      return res.status(404).send({ message: `Пользователя с id: ${id} не существует` });
-    }
-    return res.send(user);
-  });
+  Users.findOne({ _id: id })
+    .orFail(new Error('getFailId'))
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.message === 'getFailId') {
+        res.status(400).send({ message: 'Нет такого пользователя' });
+      } else {
+        res.status(500).send({ message: 'Ошибка сервера' });
+      }
+    });
 };
 
 module.exports.createUser = (req, res) => {
   const user = req.body;
   Users.create(user)
     .then(() => res.status(200).send(user))
-    .catch(() => res.status(404).send({ message: 'Ресурс недоступен' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(500).send({ message: 'Ошибка валидации' });
+      } else {
+        res.status(500).send({ message: 'Ошибка сервера' });
+      }
+    });
 };

@@ -6,7 +6,7 @@ const validationFunction = (str) => validatorUrl.isURL(str);
 
 const cardsSchema = new mongoose.Schema(
   {
-    likes: { type: ObjectId, default: [] },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user', default: [] }],
     name: {
       type: String,
       required: true,
