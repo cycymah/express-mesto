@@ -6,10 +6,9 @@ module.exports.getUsers = (req, res) => {
     .then((data) => res.status(200).send(data))
     .catch((err) => {
       if (err.message === 'getError') {
-        res.status(404).send({ message: 'Ошибка доступа' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        return [];
       }
+      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -20,7 +19,9 @@ module.exports.getUserById = (req, res) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.message === 'getFailId') {
-        res.status(400).send({ message: 'Нет такого пользователя' });
+        res.status(404).send({ message: 'Нет такого пользователя' });
+      } else if (err.message === 'CastError') {
+        res.status(400).send({ message: 'Не валидно' });
       } else {
         res.status(500).send({ message: 'Ошибка сервера' });
       }
@@ -33,7 +34,7 @@ module.exports.createUser = (req, res) => {
     .then(() => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(500).send({ message: 'Ошибка валидации' });
+        res.status(400).send({ message: 'Ошибка валидации' });
       } else {
         res.status(500).send({ message: 'Ошибка сервера' });
       }
