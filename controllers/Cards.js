@@ -29,10 +29,14 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
   Cards.findOneAndDelete({ _id: cardId })
-    .then((card) => {
-      if (!card) {
-        return res.status(404).send({ message: `Карточки с id: ${cardId} не существует` });
+    .then((card) => res.status(200).send(card))
+    .catch((err) => {
+      if (err.message === 'getFailId') {
+        res.status(404).send({ message: 'Нет такой карточки' });
+      } else if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Не валидно' });
+      } else {
+        res.status(500).send({ message: 'Ошибка сервера' });
       }
-      return res.status(200).send(card);
     });
 };

@@ -20,7 +20,7 @@ module.exports.getUserById = (req, res) => {
     .catch((err) => {
       if (err.message === 'getFailId') {
         res.status(404).send({ message: 'Нет такого пользователя' });
-      } else if (err.message === 'CastError') {
+      } else if (err.name === 'CastError') {
         res.status(400).send({ message: 'Не валидно' });
       } else {
         res.status(500).send({ message: 'Ошибка сервера' });
