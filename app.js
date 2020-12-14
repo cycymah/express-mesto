@@ -10,7 +10,9 @@ const usersRouter = require('./routers/users.js');
 const usersCards = require('./routers/cards.js');
 const { login, createUser } = require('./controllers/Users');
 const autoriz = require('./middlewares/auth');
+const cors = require('cors');
 
+app.use(cors());
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: true,
