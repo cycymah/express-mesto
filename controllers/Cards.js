@@ -3,9 +3,7 @@ const Cards = require('../models/cards');
 module.exports.getCards = (req, res) => {
   Cards.find()
     .orFail(new Error('getFail'))
-    .then((data) => {
-      res.status(200).send(data);
-    })
+    .then((data) => res.status(200).send(data))
     .catch((err) => {
       if (err.message === 'getFail') {
         return [];

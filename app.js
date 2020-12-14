@@ -1,30 +1,35 @@
-// Спасибо за труд! Чая, кофе и печенек!
-// Огромное спасибо за комментарии! Очень много полезной информации!
-// К счастью (или к сожалению), меня как раз взяли на работу!:)
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
 const PORT = 3000;
 const mongoose = require('mongoose');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const usersRouter = require('./routers/users.js');
 const usersCards = require('./routers/cards.js');
+const { login, createUser } = require('./controllers/Users');
+const autoriz = require('./middlewares/auth');
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: true,
   useCreateIndex: true,
+  useUnifiedTopology: true,
 });
 
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5fb97582e0823310c53299f3',
-  };
+app.use(requestLogger);
 
-  next();
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
 });
 
+app.post('/signin', login);
+app.post('/signup', createUser);
+
+app.use(autoriz);
 app.use('/', usersRouter);
 app.use('/', usersCards);
 app.use('*', (req, res) => {

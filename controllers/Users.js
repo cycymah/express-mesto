@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const Users = require('../models/users');
 
 module.exports.getUsers = (req, res) => {
@@ -28,15 +30,59 @@ module.exports.getUserById = (req, res) => {
     });
 };
 
+module.exports.getCurrentUser = (req, res, next) => {
+  Users.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        return res.status(400).send({ message: 'Пользователь не найден' });
+      }
+      return res.status(200).send(user);
+    })
+    .catch((err) => next(err));
+};
+
 module.exports.createUser = (req, res) => {
-  const user = req.body;
-  Users.create(user)
-    .then(() => res.status(200).send(user))
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  Users.findOne({ email })
+    .then((user) => {
+      if (user) {
+        return res.status(400).send({ message: 'Пользователь уже существует' });
+      }
+      return bcrypt.hash(password, 10);
+    })
+    .then((hash) => Users.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => res.status(200).send({
+      email: user.email,
+      _id: user._id,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Ошибка валидации' });
-      } else {
-        res.status(500).send({ message: 'Ошибка сервера' });
+        return res.status(400).send({ message: 'Ошибка валидации' });
       }
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return Users.findUser(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        'the-secret-key',
+        { expiresIn: '7d' },
+      );
+      res.cookie('jwt', token, {
+        maxAge: 604800000,
+        httpOnly: true,
+        sameSite: true,
+      }).send(user);
+    })
+    .catch(() => {
+      res.status(401).send({ message: 'Неверный логин или пароль' });
     });
 };
