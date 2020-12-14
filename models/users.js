@@ -1,11 +1,8 @@
 const mongoose = require('mongoose');
-const validatorUrl = require('validator');
 const bcrypt = require('bcryptjs');
+const isEmail = require('validator/lib/isEmail');
+const isURL = require('validator/lib/isURL');
 
-// const validationFunction = (str) => {
-
-//   return validatorUrl.isURL(str)
-// };
 
 const usersSchema = new mongoose.Schema(
   {
@@ -23,7 +20,12 @@ const usersSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      validate: validatorUrl.isURL,
+      validate: {
+        validator(v) {
+          return isURL(v);
+        },
+        message: 'Ошибка валидации URL',
+      },
       default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     },
     password: {
@@ -34,7 +36,12 @@ const usersSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      validate: validatorUrl.isEmail,
+      validate: {
+        validator(v) {
+          return isEmail(v);
+        },
+        message: 'Ошибка валидации email',
+      },
       min: 5,
       max: 30,
       unique: true,
