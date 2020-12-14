@@ -45,8 +45,10 @@ module.exports.createUser = (req, res) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
+  console.log(email, password, 'Create user');
   Users.findOne({ email })
     .then((user) => {
+      console.log(user, ' user');
       if (user) {
         return res.status(400).send({ message: 'Пользователь уже существует' });
       }
@@ -68,9 +70,10 @@ module.exports.createUser = (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-
+  console.log(req);
   return Users.findUser(email, password)
     .then((user) => {
+      console.log(user, 'User логин');
       const token = jwt.sign(
         { _id: user._id },
         'the-secret-key',

@@ -2,17 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 
-const app = express();
-const PORT = 3000;
 const mongoose = require('mongoose');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const usersRouter = require('./routers/users.js');
 const usersCards = require('./routers/cards.js');
 const { login, createUser } = require('./controllers/Users');
 const autoriz = require('./middlewares/auth');
-const cors = require('cors');
+const app = express();
+const PORT = 3000;
+// const cors = require('cors');
 
-app.use(cors());
+// app.use(cors());
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: true,
@@ -36,15 +36,17 @@ app.post('/signin', celebrate({
   }),
 }), login);
 
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(/^(http|https):\/\/[^ "]+$/),
+app.post('/signup',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().pattern(/^(http|https):\/\/[^ "]+$/),
+    }),
   }),
-}), createUser);
+  createUser);
 
 app.use(autoriz);
 app.use('/', usersRouter);
@@ -53,8 +55,7 @@ app.use('/', usersCards);
 app.use(errorLogger);
 app.use(errors());
 
-
-app.use((err, req, res, next) => {
+app.use((req, res, err, next) => {
   const { statusCode = 500, message } = err;
   res
     .status(statusCode)
@@ -67,3 +68,5 @@ app.use('*', (req, res) => {
 });
 
 app.listen(PORT);
+
+console.log('Работает на потру', PORT);
