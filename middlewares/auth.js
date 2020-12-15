@@ -6,6 +6,7 @@ const auth = (req, res, next) => {
   console.log(authorization, ' авторизация');
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
+    console.log('Ошибка 1');
     return res.status(400).send({ message: 'Нужно авторизироваться' });
   }
   const token = authorization.replace('Bearer ', '');
@@ -14,6 +15,7 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, 'key-secret');
   } catch (err) {
+    console.log('Ошибка 2');
     return res.status(400).send({ message: 'Нет атворизации' });
   }
 
