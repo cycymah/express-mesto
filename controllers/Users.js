@@ -1,3 +1,4 @@
+const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Users = require('../models/users');
@@ -64,21 +65,22 @@ module.exports.createUser = (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
+
   Users.findUser(email, password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        'the-secret-key',
-        { expiresIn: '7d' },
-      );
-
-      res.cookie('jwt', token, {
-        maxAge: 604800000,
-        httpOnly: true,
-        sameSite: true,
-      }).send(user);
+      const token = jwt.sign({ _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
+      res.status(200)
+        .send({
+          token,
+          name: user.name,
+          email: user.email,
+        });
     })
-    .catch(() => {
-      res.status(401).send({ message: 'Неверный логин или пароль' });
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400)
+          .send({ message: 'Ошибка валидации' });
+      }
     });
 };
