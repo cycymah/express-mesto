@@ -43,10 +43,8 @@ module.exports.getCurrentUser = (req, res, next) => {
 
 module.exports.createUser = (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password, 'Create user');
   Users.findOne({ email })
     .then((user) => {
-      console.log(user, ' user');
       if (user) {
         return res.status(400).send({ message: 'Пользователь уже существует' });
       }
