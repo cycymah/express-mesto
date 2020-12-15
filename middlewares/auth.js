@@ -3,7 +3,8 @@ const jwt = require('jsonwebtoken');
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
   console.log(authorization, ' авторизация');
-
+  console.log(!authorization || !authorization.startsWith('Bearer '), ' avto ',
+    (!authorization), ' start ', !authorization.startsWith('Bearer '));
   if (!authorization || !authorization.startsWith('Bearer ')) {
     console.log('Ошибка 1');
     return res.status(400).send({ message: 'Нужно авторизироваться' });
