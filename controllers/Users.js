@@ -71,6 +71,7 @@ module.exports.login = (req, res) => {
         'the-secret-key',
         { expiresIn: '7d' },
       );
+
       res.cookie('jwt', token, {
         maxAge: 604800000,
         httpOnly: true,
