@@ -16,6 +16,7 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   const { id } = req.params;
+  console.log('GetUserByIs.is    ', id);
   Users.findOne({ _id: id })
     .orFail(new Error('getFailId'))
     .then((user) => res.status(200).send(user))
