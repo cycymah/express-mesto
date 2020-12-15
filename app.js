@@ -13,14 +13,7 @@ const autoriz = require('./middlewares/auth');
 const app = express();
 const PORT = 3000;
 
-const corsConfig = {
-  "origin": "*",
-  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "preflightContinue": false,
-  "optionsSuccessStatus": 204
-}
-
-app.use(cors(corsConfig));
+app.use(cors());
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: true,
