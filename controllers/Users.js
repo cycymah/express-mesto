@@ -42,9 +42,7 @@ module.exports.getCurrentUser = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
+  const { email, password } = req.body;
   console.log(email, password, 'Create user');
   Users.findOne({ email })
     .then((user) => {
@@ -54,9 +52,7 @@ module.exports.createUser = (req, res) => {
       }
       return bcrypt.hash(password, 10);
     })
-    .then((hash) => Users.create({
-      name, about, avatar, email, password: hash,
-    }))
+    .then((hash) => Users.create({ email, password: hash }))
     .then((user) => res.status(200).send({
       email: user.email,
       _id: user._id,
@@ -70,10 +66,8 @@ module.exports.createUser = (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-  console.log(req);
   return Users.findUser(email, password)
     .then((user) => {
-      console.log(user, 'User логин');
       const token = jwt.sign(
         { _id: user._id },
         'the-secret-key',
