@@ -58,9 +58,8 @@ module.exports.createCard = (req, res) => {
 
 // Удаляем карточку
 module.exports.deleteCard = (req, res) => {
-  console.log(req.params);
-  const { cardId } = req.params;
-  Cards.findByIdAndRemove({ _id: cardId })
+  const { id } = req.params;
+  Cards.findByIdAndRemove({ _id: id })
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.message === 'getFailId') {
