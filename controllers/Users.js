@@ -14,6 +14,19 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
+module.exports.updateUser = (req, res) => {
+  const { name, about } = req.body;
+  Users.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+    .then((user) => {
+      res.status(200).send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Ошибка валидации' });
+      }
+    });
+};
+
 module.exports.getUserById = (req, res) => {
   const { id } = req.params;
   console.log('GetUserByIs.is    ', req.params.id, '   asd ', req.params);
@@ -24,12 +37,27 @@ module.exports.getUserById = (req, res) => {
       if (err.message === 'getFailId') {
         res.status(404).send({ message: 'Нет такого пользователя' });
       } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Не валидно' });
+        res.status(400).send({ message: 'Ошибка валидации' });
       } else {
         res.status(500).send({ message: 'Ошибка сервера' });
       }
     });
 };
+
+module.exports.updateAvatar = (req, res, next) => {
+  const { avatar } = req.body;
+
+  Users.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+    .then((user) => {
+      res.status(200).send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Ошибка валидации' });
+      }
+      next(err);
+    });
+}
 
 module.exports.getCurrentUser = (req, res, next) => {
 
@@ -43,7 +71,7 @@ module.exports.getCurrentUser = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const { email, password } = req.body;
   Users.findOne({ email })
     .then((user) => {
@@ -61,6 +89,7 @@ module.exports.createUser = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Ошибка валидации' });
       }
+      next(err);
     });
 };
 
