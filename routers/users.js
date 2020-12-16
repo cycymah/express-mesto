@@ -1,9 +1,7 @@
 const router = require('express').Router();
-// const { celebrate, Joi } = require('celebrate');
 const { getUsers, getUserById, getCurrentUser } = require('../controllers/Users');
 
-
-// Получение пользователя
+// Получаем пользователя
 router.get('/users/me', getCurrentUser);
 
 // Маршрут для списка пользователей

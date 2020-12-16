@@ -56,12 +56,11 @@ app.use('/', usersCards);
 app.use(errorLogger);
 app.use(errors());
 
-app.use((req, res, next) => {
-  res
-    .status(500)
-    .send({ message: 'Ошибка сервера!' });
-  next();
-});
+// app.use((req, res, next) => {
+//   res
+//     .status(500)
+//     .send({ message: 'Ошибка сервера!' });
+// });
 
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
