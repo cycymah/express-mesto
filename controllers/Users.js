@@ -93,7 +93,8 @@ module.exports.createUser = (req, res, next) => {
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
+  console.log(req.body)
   const { email, password } = req.body;
 
   Users.findUser(email, password)
@@ -112,5 +113,6 @@ module.exports.login = (req, res) => {
         return res.status(400)
           .send({ message: 'Ошибка валидации' });
       }
+      next(err);
     });
 };
