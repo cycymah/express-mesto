@@ -12,6 +12,22 @@ module.exports.getCards = (req, res) => {
     });
 };
 
+// Ставим лайки
+module.exports.putLike = (req, res, next) => {
+  Cards.findByIdAndUpdate(
+    req.params.id,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Ресурс не найден' });
+      }
+      return res.status(200).send(card);
+    })
+    .catch((err) => next(err));
+};
+
 module.exports.createCard = (req, res) => {
   const card = req.body;
   Cards.create({ ...card, likes: req.user._id, owner: req.user._id })
