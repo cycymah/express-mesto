@@ -42,9 +42,6 @@ app.post('/signup',
     body: Joi.object().keys({
       email: Joi.string().required().email(),
       password: Joi.string().required().min(8),
-      // name: Joi.string().min(2).max(30),
-      // about: Joi.string().min(2).max(30),
-      // avatar: Joi.string().pattern(/^(http|https):\/\/[^ "]+$/),
     }),
   }),
   createUser);
@@ -56,11 +53,11 @@ app.use('/', usersCards);
 app.use(errorLogger);
 app.use(errors());
 
-// app.use((req, res, next) => {
-//   res
-//     .status(500)
-//     .send({ message: 'Ошибка сервера!' });
-// });
+app.use((req, res, next) => {
+  res
+    .status(500)
+    .send({ message: 'Ошибка сервера!' });
+});
 
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });

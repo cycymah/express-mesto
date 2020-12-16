@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { getCards, createCard, deleteCard, putLike } = require('../controllers/Cards');
+const { getCards, createCard, deleteCard, putLike, deleteLike } = require('../controllers/Cards');
 
 // Маршрут для карточек
 router.get('/cards', getCards);
@@ -23,5 +23,12 @@ router.put('/cards/:id/likes', celebrate({
     id: Joi.string().hex().length(24),
   }),
 }), putLike);
+
+router.delete('/cards/:id/likes', celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().hex().length(24),
+  }),
+}), deleteLike);
+
 
 module.exports = router;
