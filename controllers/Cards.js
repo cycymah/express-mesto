@@ -46,7 +46,7 @@ module.exports.deleteLike = (req, res, next) => {
 
 module.exports.createCard = (req, res) => {
   const card = req.body;
-  Cards.create({ ...card, likes: req.user._id, owner: req.user._id })
+  Cards.create({ ...card, owner: req.user._id })
     .then((data) => res.status(200).send(data))
     .catch((err) => {
       if (err.name === 'ValidationError') {
