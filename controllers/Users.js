@@ -24,12 +24,12 @@ module.exports.updateUser = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Ошибка валидации' });
       }
+      return res.status(500).send({ message: 'Ошибка сервера' });
     });
 };
 
 module.exports.getUserById = (req, res) => {
   const { id } = req.params;
-  console.log('GetUserByIs.is    ', req.params.id, '   asd ', req.params);
   Users.findOne({ _id: id })
     .orFail(new Error('getFailId'))
     .then((user) => res.status(200).send(user))
@@ -44,7 +44,7 @@ module.exports.getUserById = (req, res) => {
     });
 };
 
-module.exports.updateAvatar = (req, res, next) => {
+module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
   Users.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
@@ -55,12 +55,11 @@ module.exports.updateAvatar = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Ошибка валидации' });
       }
-      next(err);
+      return res.status(500).send({ message: 'Ошибка сервера' });
     });
-}
+};
 
 module.exports.getCurrentUser = (req, res, next) => {
-
   Users.findById(req.user._id)
     .then((user) => {
       if (!user) {
@@ -71,7 +70,7 @@ module.exports.getCurrentUser = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports.createUser = (req, res, next) => {
+module.exports.createUser = (req, res) => {
   const { email, password } = req.body;
   Users.findOne({ email })
     .then((user) => {
@@ -89,12 +88,11 @@ module.exports.createUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Ошибка валидации' });
       }
-      next(err);
+      return res.status(500).send({ message: 'Ошибка сервера' });
     });
 };
 
-module.exports.login = (req, res, next) => {
-  console.log(req.body)
+module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
   Users.findUser(email, password)
@@ -108,11 +106,7 @@ module.exports.login = (req, res, next) => {
           email: user.email,
         });
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(400)
-          .send({ message: 'Ошибка валидации' });
-      }
-      next(err);
+    .catch(() => {
+      res.status(401).send({ message: 'Неправильные логин или пароль' });
     });
 };

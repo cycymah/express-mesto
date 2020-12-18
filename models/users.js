@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+
 const isEmail = require('validator/lib/isEmail');
 const isURL = require('validator/lib/isURL');
 
@@ -30,8 +31,9 @@ const usersSchema = new mongoose.Schema(
     password: {
       type: String,
       min: 8,
-      max: 30,
       unique: true,
+      required: true,
+      select: false,
     },
     email: {
       type: String,
@@ -44,6 +46,7 @@ const usersSchema = new mongoose.Schema(
       min: 5,
       max: 30,
       unique: true,
+      required: true,
     },
   },
   {
@@ -51,6 +54,7 @@ const usersSchema = new mongoose.Schema(
   },
 );
 
+// eslint-disable-next-line func-names
 usersSchema.statics.findUser = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {

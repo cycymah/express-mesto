@@ -60,7 +60,12 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   const { id } = req.params;
   Cards.findByIdAndRemove({ _id: id })
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (!card) {
+        return res.status(400).send({ message: 'Карточка уже удалена' });
+      }
+      return res.status(200).send(card);
+    })
     .catch((err) => {
       if (err.message === 'getFailId') {
         res.status(404).send({ message: 'Нет такой карточки' });

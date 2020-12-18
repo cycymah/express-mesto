@@ -40,8 +40,8 @@ app.post('/signin', celebrate({
 app.post('/signup',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required().min(8),
+      email: Joi.string().email(),
+      password: Joi.string().min(8),
     }),
   }),
   createUser);
@@ -53,7 +53,7 @@ app.use('/', usersCards);
 app.use(errorLogger);
 app.use(errors());
 
-app.use((req, res, next) => {
+app.use((req, res) => {
   res
     .status(500)
     .send({ message: 'Ошибка сервера!' });
