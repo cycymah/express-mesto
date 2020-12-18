@@ -6,7 +6,7 @@ module.exports.getCards = (req, res) => {
     .then((data) => res.status(200).send(data))
     .catch((err) => {
       if (err.message === 'getFail') {
-        return [];
+        return res.status(200).send([]);
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
     });
