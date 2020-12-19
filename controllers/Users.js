@@ -97,6 +97,9 @@ module.exports.login = (req, res) => {
 
   Users.findUser(email, password)
     .then((user) => {
+      if (!user) {
+        res.status(401).send({ message: 'Нет авторизации' });
+      }
       const token = jwt.sign({ _id: user._id },
         'key-secret', { expiresIn: '7d' });
       res.status(200)
@@ -106,7 +109,5 @@ module.exports.login = (req, res) => {
           email: user.email,
         });
     })
-    .catch(() => {
-      res.status(401).send({ message: 'Неправильные логин или пароль' });
-    });
+    .catch(() => res.status(401).send({ message: 'Неправильные логин или пароль' }));
 };
