@@ -40,8 +40,8 @@ app.post('/signin', celebrate({
 app.post('/signup',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().email(),
-      password: Joi.string().min(8),
+      email: Joi.string().required().email(),
+      password: Joi.string().required.min(8),
     }),
   }),
   createUser);
@@ -53,14 +53,14 @@ app.use('/', usersCards);
 app.use(errorLogger);
 app.use(errors());
 
-app.use((req, res) => {
-  res
-    .status(500)
-    .send({ message: 'Ошибка сервера!' });
-});
-
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+});
+
+app.use((req, res) => {
+  res
+    .status(404)
+    .send({ message: 'Ошибка сервера!' });
 });
 
 app.listen(PORT);

@@ -2,7 +2,6 @@ const Cards = require('../models/cards');
 
 module.exports.getCards = (req, res) => {
   Cards.find()
-    .orFail(new Error('getFail'))
     .then((data) => res.status(200).send(data))
     .catch((err) => {
       if (err.message === 'getFail') {
@@ -61,8 +60,9 @@ module.exports.deleteCard = (req, res) => {
   const { id } = req.params;
   Cards.findByIdAndRemove({ _id: id })
     .then((card) => {
-      if (!card) {
-        return res.status(400).send({ message: 'Карточка уже удалена' });
+      console.log(req, ' запрос ', card.owner);
+      if (card.owner.toString() !== req.user._id) {
+        return res.status(403).send({ message: 'Недостаточно прав' });
       }
       return res.status(200).send(card);
     })
