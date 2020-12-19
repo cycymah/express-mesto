@@ -60,7 +60,6 @@ module.exports.deleteCard = (req, res) => {
   const { id } = req.params;
   Cards.findByIdAndRemove({ _id: id })
     .then((card) => {
-      console.log(req, ' запрос ', card.owner);
       if (card.owner.toString() !== req.user._id) {
         return res.status(403).send({ message: 'Недостаточно прав' });
       }
