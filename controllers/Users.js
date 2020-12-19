@@ -71,16 +71,23 @@ module.exports.getCurrentUser = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { email, password } = req.body;
+  const {
+    email, password, name, avatar, about,
+  } = req.body;
   Users.findOne({ email })
     .then((user) => {
       if (user) {
-        return res.status(400).send({ message: 'Пользователь уже существует' });
+        return res.status(409).send({ message: 'Пользователь уже существует' });
       }
       return bcrypt.hash(password, 10);
     })
-    .then((hash) => Users.create({ email, password: hash }))
+    .then((hash) => Users.create({
+      email, name, avatar, about, password: hash,
+    }))
     .then((user) => res.status(200).send({
+      avatar: user.avatar,
+      about: user.about,
+      name: user.name,
       email: user.email,
       _id: user._id,
     }))
