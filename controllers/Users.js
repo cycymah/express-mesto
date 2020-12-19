@@ -106,5 +106,8 @@ module.exports.login = (req, res) => {
           email: user.email,
         });
     })
-    .catch(() => res.status(401).send({ message: 'Неправильные логин или пароль' }));
+    .catch((err) => {
+      console.log(err);
+      res.status(401).send({ message: 'Неправильные логин или пароль' });
+    });
 };
