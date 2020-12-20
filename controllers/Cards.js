@@ -73,11 +73,5 @@ module.exports.deleteCard = (req, res, next) => {
         .then((cardInfo) => res.status(200).send(cardInfo))
         .catch(next);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Не валидно' });
-      } else {
-        res.status(500).send({ message: 'Ошибка сервера' });
-      }
-    });
+    .catch(next);
 };
